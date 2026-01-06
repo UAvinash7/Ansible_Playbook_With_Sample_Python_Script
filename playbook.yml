@@ -1,0 +1,20 @@
+---
+- name: Deploy and execute a system info Python script
+  hosts: servers
+  gather_facts: false
+
+  tasks:
+    - name: Copy Python script to the remote machine
+      ansible.builtin.copy:
+        src: ./system_info.py
+        dest: /tmp/system_info.py
+        mode: '0755' # Ensures the script is executable (rwxr-xr-x)
+
+    - name: Execute the script with a demonstration argument
+      ansible.builtin.command: /tmp/system_info.py "arg1" "arg2"
+      register: script_result # Store the output in this variable
+
+    - name: Display the script's standard output (stdout)
+      ansible.builtin.debug:
+        msg: "{{ script_result.stdout | from_json }}"
+
